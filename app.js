@@ -452,7 +452,8 @@ function renderCountdown() {
 
 function renderStats(stats) {
   animateCount($("statDone"), stats.done);
-  animateCount($("statKm"), Math.round(stats.km * 10) / 10, " km");
+  if (UNIT === "min") animateCount($("statKm"), Math.round(stats.secs / 60), " min");
+  else animateCount($("statKm"), Math.round(stats.km * 10) / 10, " km");
   animateCount($("statStreak"), stats.streak);
   const cw = currentWeek();
   const wk = PLAN.find((w) => w.week === cw);
@@ -802,10 +803,79 @@ function renderShiftControl() {
   }
 }
 
+/* ----- Gewicht bijhouden ---------------------------------------------- *
+ *  Geen startgewicht in de code: de eerste weging die Marissa invult is
+ *  haar startpunt. De balk loopt naar 4 kg, wat in 8 weken realistisch is.
+ * ---------------------------------------------------------------------- */
+const BW_DOEL = 4;
+const BW_MAAND = ["jan", "feb", "mrt", "apr", "mei", "jun", "jul", "aug", "sep", "okt", "nov", "dec"];
+function bwEntries() {
+  return Array.isArray(log.__bw) ? log.__bw.slice().sort((a, b) => (a.date < b.date ? -1 : 1)) : [];
+}
+function bwVandaag() {
+  const d = new Date();
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+}
+function bwDatum(iso) {
+  const d = new Date(iso + "T12:00:00");
+  return `${d.getDate()} ${BW_MAAND[d.getMonth()]}`;
+}
+function renderBodyweight() {
+  const cur = document.getElementById("bwCurrent");
+  if (!cur) return;
+  const rij = bwEntries();
+  const lost = document.getElementById("bwLost");
+  const fill = document.getElementById("bwFill");
+  const hist = document.getElementById("bwHist");
+  if (!rij.length) {
+    cur.textContent = "–";
+    lost.textContent = "vul je eerste weging in";
+    fill.style.width = "0%";
+    hist.innerHTML = "";
+    return;
+  }
+  const start = rij[0].kg;
+  const nu = rij[rij.length - 1].kg;
+  const eraf = Math.round((start - nu) * 10) / 10;
+  cur.textContent = `${nlNum(nu)} kg`;
+  lost.textContent = rij.length === 1
+    ? "dit is je startgewicht"
+    : eraf > 0
+      ? `${nlNum(eraf)} kg eraf sinds je start`
+      : eraf < 0
+        ? `${nlNum(Math.abs(eraf))} kg erbij, dat hoort erbij`
+        : "gelijk aan je start";
+  fill.style.width = `${Math.max(0, Math.min(100, Math.round((eraf / BW_DOEL) * 100)))}%`;
+  hist.innerHTML = rij.slice(-4).reverse()
+    .map((e) => `<span class="bw-chip">${bwDatum(e.date)} · ${nlNum(e.kg)} kg</span>`).join("");
+}
+function bindBodyweight() {
+  const knop = document.getElementById("bwSave");
+  const veld = document.getElementById("bwInput");
+  if (!knop || !veld) return;
+  knop.addEventListener("click", () => {
+    const v = parseFloat(String(veld.value).replace(",", ".").replace(/[^\d.]/g, ""));
+    if (!v || v < 30 || v > 250) { toast("Vul je gewicht in kg in, bijvoorbeeld 82,4"); return; }
+    const arr = bwEntries();
+    const vandaag = bwVandaag();
+    const bestaand = arr.find((e) => e.date === vandaag);
+    if (bestaand) bestaand.kg = Math.round(v * 10) / 10;
+    else arr.push({ date: vandaag, kg: Math.round(v * 10) / 10 });
+    log.__bw = arr;
+    saveLog();
+    veld.value = "";
+    veld.blur();
+    renderBodyweight();
+    toast(arr.length === 1 ? "Startgewicht opgeslagen ⚖️" : "Gewicht opgeslagen ⚖️");
+  });
+  veld.addEventListener("keydown", (e) => { if (e.key === "Enter") knop.click(); });
+}
+
 function renderAll() {
   const stats = computeStats();
   renderHero(stats);
   renderStats(stats);
+  renderBodyweight();
   renderGreeting();
   renderConsistency();
   renderNextUp();
@@ -1224,3 +1294,4 @@ if (navigator.storage && navigator.storage.persist) {
     .then((al) => (al ? true : navigator.storage.persist()))
     .catch(() => {});
 }
+bindBodyweight();

@@ -673,3 +673,19 @@ h1, h2, h3, h4, p { margin-top: 0; }
 .shift-notice .shift-copy span { display: block; font-size: 0.76rem; color: var(--muted); margin-top: 2px; }
 .shift-notice button { border: none; border-radius: 999px; padding: 9px 14px; font-weight: 700; font-size: 0.82rem; background: var(--volt); color: var(--volt-ink); cursor: pointer; transition: transform 0.15s var(--spring); }
 .shift-notice button:active { transform: scale(0.96); }
+
+/* ----- Gewicht bijhouden ----- */
+.bw-card{margin-top:14px}
+.bw-top{display:flex;justify-content:space-between;align-items:flex-end;gap:12px;margin-bottom:10px}
+.bw-current{font-size:1.7rem;font-weight:800;color:var(--ink);line-height:1}
+.bw-lost{font-size:.82rem;color:var(--volt);font-weight:700}
+.bw-goal-label{font-size:.78rem;color:var(--muted);text-align:right}
+.bw-bar{height:12px;border-radius:99px;background:var(--card-2);overflow:hidden;border:1px solid var(--line)}
+.bw-fill{height:100%;border-radius:99px;background:linear-gradient(90deg,var(--violet),var(--volt));transition:width .6s cubic-bezier(.2,.7,.2,1)}
+.bw-input-row{display:flex;gap:8px;margin-top:12px}
+.bw-input-row input{flex:1;min-width:0;background:var(--card-2);border:1px solid var(--line);border-radius:12px;color:var(--ink);padding:11px 13px;font-size:1rem}
+.bw-save{background:var(--volt);color:var(--volt-ink);border:0;border-radius:12px;padding:11px 16px;font-weight:800;font-size:.95rem;cursor:pointer;transition:transform .15s var(--spring)}
+.bw-save:active{transform:scale(.97)}
+.bw-hist{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+.bw-chip{font-size:.74rem;color:var(--muted);background:var(--card-2);border:1px solid var(--line);border-radius:99px;padding:4px 9px}
+.bw-note{margin:10px 0 0;font-size:.78rem;line-height:1.5;color:var(--muted)}

@@ -12,8 +12,8 @@
     <meta property="og:title" content="Stap voor stap, voor Marissa" />
     <meta property="og:description" content="In 8 weken van wandelen naar 20 minuten aaneengesloten. Persoonlijke coaching van @bartlopen." />
     <meta property="og:url" content="https://bartdevries43-arch.github.io/bartlopen-marissa/" />
-    <meta property="og:image" content="https://bartdevries43-arch.github.io/bartlopen-marissa/bartlopen-runcoach.png?v=2-rec" />
-    <meta property="og:image:secure_url" content="https://bartdevries43-arch.github.io/bartlopen-marissa/bartlopen-runcoach.png?v=2-rec" />
+    <meta property="og:image" content="https://bartdevries43-arch.github.io/bartlopen-marissa/bartlopen-runcoach.png?v=2-rec-gew" />
+    <meta property="og:image:secure_url" content="https://bartdevries43-arch.github.io/bartlopen-marissa/bartlopen-runcoach.png?v=2-rec-gew" />
     <meta property="og:image:type" content="image/png" />
     <meta property="og:image:width" content="1254" />
     <meta property="og:image:height" content="1254" />
@@ -25,7 +25,7 @@
     <meta name="mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
     <meta name="apple-mobile-web-app-title" content="Stap voor stap" />
-    <link rel="stylesheet" href="styles.css?v=1-rec" />
+    <link rel="stylesheet" href="styles.css?v=1-rec-gew" />
   </head>
   <body>
     <div id="splash" class="splash" aria-hidden="true">
@@ -89,9 +89,25 @@
           <!-- Strava-achtige stats -->
           <section class="stats-grid reveal">
             <div class="stat-tile"><span class="stat-val" data-count="0" id="statDone">0</span><span class="stat-label">trainingen</span></div>
-            <div class="stat-tile"><span class="stat-val" data-count="0" data-suffix=" km" id="statKm">0</span><span class="stat-label">gelopen</span></div>
+            <div class="stat-tile"><span class="stat-val" data-count="0" data-suffix=" min" id="statKm">0</span><span class="stat-label">gelopen</span></div>
             <div class="stat-tile"><span class="stat-val" data-count="0" id="statStreak">0</span><span class="stat-label">reeks 🔥</span></div>
             <div class="stat-tile"><span class="stat-val" id="statWeek">0/2</span><span class="stat-label">deze week</span></div>
+          </section>
+
+          <!-- Gewicht bijhouden -->
+          <section class="panel bw-card reveal">
+            <h3 class="panel-head">Jouw gewicht <span class="panel-sub">1× per week, zelfde moment</span></h3>
+            <div class="bw-top">
+              <div><span class="bw-current" id="bwCurrent">–</span><br /><span class="bw-lost" id="bwLost">vul je eerste weging in</span></div>
+              <span class="bw-goal-label" id="bwGoalLabel">richting 4 kg in dit blok</span>
+            </div>
+            <div class="bw-bar"><div class="bw-fill" id="bwFill" style="width:0%"></div></div>
+            <div class="bw-input-row">
+              <input type="text" id="bwInput" inputmode="decimal" placeholder="Weeg je vandaag? Vul kg in" />
+              <button class="bw-save" id="bwSave" type="button">Opslaan</button>
+            </div>
+            <div class="bw-hist" id="bwHist"></div>
+            <p class="bw-note">Eén keer per week wegen is genoeg, het liefst op dezelfde dag op hetzelfde moment. Je gewicht schommelt per dag door vocht en eten, de lijn over weken is wat telt.</p>
           </section>
 
           <!-- Volgende training -->
@@ -194,6 +210,6 @@
 
     <div id="toast" class="toast" aria-live="polite"></div>
 
-    <script src="app.js?v=1-rec"></script>
+    <script src="app.js?v=1-rec-gew"></script>
   </body>
 </html>
