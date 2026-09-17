@@ -689,3 +689,5 @@ h1, h2, h3, h4, p { margin-top: 0; }
 .bw-hist{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
 .bw-chip{font-size:.74rem;color:var(--muted);background:var(--card-2);border:1px solid var(--line);border-radius:99px;padding:4px 9px}
 .bw-note{margin:10px 0 0;font-size:.78rem;line-height:1.5;color:var(--muted)}
+
+.form-grid .label-hint{display:block;font-size:.68rem;font-weight:600;color:var(--muted);opacity:.85;line-height:1.3}

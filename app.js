@@ -949,8 +949,8 @@ function openDetail(week, day) {
         <label class="full">Gemiddeld tempo
           <output id="fPace" class="pace-out">${fmtPace(paceSeconds(e.distance, e.time)) || "–"}</output>
         </label>
-        <label>Hartslag (bpm)
-          <input id="fHr" type="number" inputmode="numeric" placeholder="bv. 152" value="${escapeHtml(e.hr ?? "")}">
+        <label>Hartslag (bpm) <span class="label-hint">rustig is voor jou ongeveer 110 tot 140</span>
+          <input id="fHr" type="number" inputmode="numeric" placeholder="bv. 128" value="${escapeHtml(e.hr ?? "")}">
         </label>
         <label>Gevoel / zwaarte
           <select id="fFeel">
