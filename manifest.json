@@ -1,0 +1,31 @@
+{
+  "name": "Stap voor stap (Marissa) · bartlopen Run Coach",
+  "short_name": "Stap voor stap",
+  "description": "Het persoonlijke schema van Marissa: in 8 weken van wandelen naar 20 minuten aaneengesloten, met coaching van @bartlopen.",
+  "start_url": ".",
+  "scope": ".",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#0b0810",
+  "theme_color": "#0b0810",
+  "icons": [
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}
