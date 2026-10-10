@@ -1,6 +1,6 @@
 /* ================================================================== *
  *  Marissa, Run Coach · fitter worden, stap voor stap
- *  8 weken van wandelen naar 20 minuten aaneengesloten (21 sep t/m 15 nov 2026).
+ *  8 weken, vanaf week 4 een wandelschema met de honden vanwege haar rug (21 sep t/m 15 nov 2026).
  *  Twee flexibele trainingen per week, rug-vriendelijk opgebouwd,
  *  naast haar dagelijkse hondenwandelingen en 2x Basic Fit.
  * ================================================================== */
@@ -15,7 +15,7 @@ const CONFIG = {
     "Je bouwt 'm rustig op, strijder.",
     "Halverwege, knap volgehouden! ⚡",
     "Bijna bij je mijlpaal, strijder!",
-    "20 minuten aan één stuk! Wat een strijder 🎉",
+    "60 minuten met je honden! Wat een strijder 🎉",
   ],
   appName:    "Stap voor stap",
   runner:     "Marissa",
@@ -41,14 +41,26 @@ const ZONE_SUFFIX = CONFIG.zonePaceSuffix ?? "/km";
 const COACH_INITIAL = (CONFIG.coachName.replace(/^coach\s+/i, "")[0] || "C").toUpperCase();
 
 const ZONES = [
-  { key: "herstel",  name: "Wandelen",             pace: "heel rustig", info: "RPE 1-2 · losmaken, ook met de honden" },
-  { key: "interval", name: "Hardlopen en wandelen", pace: "afwisselen", info: "RPE 3-4 in de loopjes · praten kan makkelijk" },
-  { key: "duur",     name: "Rustig hardlopen",      pace: "praattempo", info: "RPE 3-4 · aaneengesloten en ontspannen" },
-  { key: "lang",     name: "Jouw mijlpaal",         pace: "rustig",     info: "RPE 4 · 20 minuten aan één stuk" },
+  { key: "herstel",  name: "Rustig wandelen",       pace: "eigen tempo",       info: "RPE 1-2 · ook met de honden" },
+  { key: "stevig",   name: "Stevig wandelen",       pace: "stevig doorstappen", info: "RPE 3-4 · praten kan, zingen niet" },
+  { key: "rug",      name: "Rug en mobiliteit",     pace: "rustig en pijnvrij", info: "RPE 1-2 · soepel en sterk" },
+  { key: "interval", name: "Hardlopen en wandelen", pace: "afwisselen",        info: "RPE 3-4 · uit je eerste weken" },
 ];
 const zoneByKey = Object.fromEntries(ZONES.map((z) => [z.key, z]));
 
 const COACH = {
+  stevig: [
+    "Stevig doorstappen, strijder. Praten kan, zingen niet meer.",
+    "Je rug bepaalt het tempo. Voelt het goed? Dan lekker door.",
+    "Samen met je honden fitter worden. Mooier wordt het niet.",
+    "Elke stevige wandeling telt, strijder.",
+  ],
+  rug: [
+    "Rustig en pijnvrij, strijder. Dat is de enige regel.",
+    "Liever te licht dan te zwaar. Je rug bedankt je later.",
+    "Doet iets pijn? Overslaan, geen discussie.",
+    "Kleine oefeningen, groot verschil. Knap dat je het doet.",
+  ],
   herstel: [
     "Rustige dag, strijder. Wandelen telt gewoon mee.",
     "Vandaag laad je op. Je rug wordt er blij van.",
@@ -89,15 +101,18 @@ const DONE = [
 ];
 
 const WHY = {
-  herstel:  "Wandelen en rustig bewegen houdt je los zonder nieuwe belasting. Voor je rug is dit net zo waardevol als hardlopen, en het herstel is precies waar je sterker van wordt.",
+  stevig:   "Stevig wandelen is voor je rug een van de beste dingen die je kunt doen. Je hart en longen worden fitter, je verbrandt energie en je rug krijgt beweging zonder de schokken van hardlopen. Stevig betekent: je ademhaling gaat omhoog, praten kan nog, zingen niet meer.",
+  rug:      "Een sterke en soepele romp vangt je rug op. Deze oefeningen zijn licht en rustig, en ze zijn bedoeld om je rug te helpen, niet om je moe te maken. Pijnvrij is de regel: doet een oefening pijn, dan sla je hem over.",
+  herstel:  "Wandelen en rustig bewegen houdt je los zonder nieuwe belasting. Voor je rug is dit goud waard, en het herstel is precies waar je sterker van wordt.",
   interval: "Door hardlopen en wandelen af te wisselen bouw je conditie op zonder je rug en benen te overbelasten. De wandelpauzes laten je herstellen, zodat je vaker kunt trainen en de kans op klachten klein blijft.",
   duur:     "Rustig aaneengesloten hardlopen op praattempo bouwt je basisconditie: een sterker hart en benen die langer meegaan. Rustig is hier echt goed, je hoeft nog helemaal niet snel te kunnen.",
   lang:     "Dit is de opbouw naar je mijlpaal. Je leert dat je langer door kunt dan je denkt, en dat is precies wat hardlopen leuk maakt in plaats van zwaar.",
 };
 
 /* --- Twee flexibele trainingen per week, jij kiest de dagen ---------- */
-const d1 = (o) => ({ day: "d1", dayLabel: "Training 1", ...o });
-const d2 = (o) => ({ day: "d2", dayLabel: "Training 2", ...o });
+/* Zonder eigen kind neemt een training de naam van zijn zone over. */
+const d1 = (o) => ({ day: "d1", dayLabel: "Training 1", kind: zoneByKey[o.zone]?.name, ...o });
+const d2 = (o) => ({ day: "d2", dayLabel: "Training 2", kind: zoneByKey[o.zone]?.name, ...o });
 
 const PLAN = [
   { week: 1, dates: "21–27 sep", phase: "Fase 1 · Wennen aan hardlopen", sessions: [
@@ -138,111 +153,115 @@ const PLAN = [
       "5 min uitwandelen",
     ] }),
   ]},
-  { week: 4, dates: "12–18 okt", phase: "Fase 2 · Langere loopstukken", recovery: true, sessions: [
-    d1({ zone: "interval", min: 28, kind: "Hardlopen en wandelen", title: "Rustige week · 4× 3 min", goal: "Elke vierde week lichter, juist voor je rug", blocks: [
-      "5 min stevig inwandelen",
-      "4× 3 min rustig hardlopen, met 2 min wandelen tussen de blokjes (3 wandelpauzes, niet na het laatste blokje)",
-      "5 min uitwandelen",
+  { week: 4, dates: "12–18 okt", phase: "Fase 2 · Wandelen met je honden, rug voorop", sessions: [
+    d1({ zone: "rug", min: 20, title: "Rugoefeningen + korte wandeling", goal: "Je rug soepel en sterk maken", why: "Je rug heeft nu rust en beweging tegelijk nodig. Stilzitten maakt rugpijn vaak erger, rustig bewegen helpt juist. Deze oefeningen zijn licht en houden je rug soepel. Alles moet pijnvrij gaan: doet iets pijn, sla je die oefening over.", blocks: [
+      "10 min rustig wandelen met de honden om warm te worden",
+      "Kat-koe op handen en knieën: 10× rustig je rug bol en hol maken",
+      "Op je rug, knieën naar je borst: 2× 30 sec rustig vasthouden",
+      "Op je rug, bekken kantelen: 10× je onderrug zacht tegen de grond drukken",
+      "Doet een oefening pijn? Overslaan. Pijnvrij is de regel",
     ] }),
-    d2({ zone: "interval", min: 26, kind: "Hardlopen en wandelen", title: "Rustige week · 3× 4 min", goal: "Bijtanken, niets forceren", blocks: [
-      "5 min stevig inwandelen",
-      "3× 4 min rustig hardlopen, met 2 min wandelen tussen de blokjes (2 wandelpauzes, niet na het laatste blokje)",
-      "5 min uitwandelen",
-      "Gebruik deze week om te merken hoe je rug op de opbouw reageert",
-    ] }),
-  ]},
-  { week: 5, dates: "19–25 okt", phase: "Fase 2 · Langere loopstukken", sessions: [
-    d1({ zone: "interval", min: 32, kind: "Hardlopen en wandelen", title: "3× 6 min", goal: "Nu wordt het echt langer", blocks: [
-      "5 min stevig inwandelen",
-      "3× 6 min rustig hardlopen, met 2 min wandelen tussen de blokjes (2 wandelpauzes, niet na het laatste blokje)",
-      "5 min uitwandelen",
-    ] }),
-    d2({ zone: "interval", min: 35, kind: "Hardlopen en wandelen", title: "3× 7 min", goal: "Je bent over de helft", blocks: [
-      "5 min stevig inwandelen",
-      "3× 7 min rustig hardlopen, met 2 min wandelen tussen de blokjes (2 wandelpauzes, niet na het laatste blokje)",
-      "5 min uitwandelen",
+    d2({ zone: "herstel", min: 30, title: "30 min rustig wandelen", goal: "Met de honden, in je eigen tempo", blocks: [
+      "30 min rustig wandelen met de honden",
+      "Rechtop lopen, schouders los, armen rustig mee laten zwaaien",
+      "Je dagelijkse rondjes blijven gewoon, dit is je bewuste wandeling van de week",
     ] }),
   ]},
-  { week: 6, dates: "26 okt–1 nov", phase: "Fase 3 · Naar aaneengesloten lopen", sessions: [
-    d1({ zone: "interval", min: 31, kind: "Hardlopen en wandelen", title: "2× 9 min", goal: "Nog maar twee blokken", blocks: [
-      "5 min stevig inwandelen",
-      "2× 9 min rustig hardlopen, met 3 min wandelen tussen de blokjes (1 wandelpauzes, niet na het laatste blokje)",
-      "5 min uitwandelen",
+  { week: 5, dates: "19–25 okt", phase: "Fase 2 · Wandelen met je honden, rug voorop", sessions: [
+    d1({ zone: "rug", min: 25, title: "Rugoefeningen + wandeling", goal: "Oefeningen erbij, rustig opbouwen", blocks: [
+      "15 min rustig wandelen met de honden",
+      "Kat-koe: 10× rustig",
+      "Knieën naar je borst: 2× 30 sec",
+      "Bruggetje: op je rug, billen rustig omhoog en weer zakken, 2× 8",
+      "Alles pijnvrij. Liever te licht dan te zwaar",
     ] }),
-    d2({ zone: "interval", min: 35, kind: "Hardlopen en wandelen", title: "2× 11 min", goal: "Bijna aan één stuk", blocks: [
-      "5 min stevig inwandelen",
-      "2× 11 min rustig hardlopen, met 3 min wandelen tussen de blokjes (1 wandelpauzes, niet na het laatste blokje)",
-      "5 min uitwandelen",
-    ] }),
-  ]},
-  { week: 7, dates: "2–8 nov", phase: "Fase 3 · Naar aaneengesloten lopen", sessions: [
-    d1({ zone: "interval", min: 28, kind: "Hardlopen en wandelen", title: "2× 8 min", goal: "Iets korter, benen fris houden", blocks: [
-      "5 min stevig inwandelen",
-      "2× 8 min rustig hardlopen, met 2 min wandelen tussen de blokjes (1 wandelpauzes, niet na het laatste blokje)",
-      "5 min uitwandelen",
-    ] }),
-    d2({ zone: "duur", min: 25, kind: "Rustig hardlopen", title: "🎉 15 min aan één stuk", goal: "Je eerste kwartier zonder wandelpauze", blocks: [
-      "5 min stevig inwandelen",
-      "15 min aaneengesloten hardlopen, praattempo",
-      "Te zwaar? Maak er 2× 8 min van met een wandelpauze. Dat telt net zo hard",
-      "5 min uitwandelen",
+    d2({ zone: "stevig", min: 35, title: "35 min met 2× 5 min stevig", goal: "Je ademhaling een beetje omhoog", blocks: [
+      "10 min rustig wandelen met de honden",
+      "2× 5 min stevig doorstappen, met 5 min rustig ertussen",
+      "Stevig betekent: praten kan nog, zingen niet meer",
+      "Rustig uitwandelen tot 35 min",
     ] }),
   ]},
-  { week: 8, dates: "9–15 nov", phase: "Fase 3 · Naar aaneengesloten lopen", finish: true, raceLabel: "🎉 Jouw mijlpaal", sessions: [
-    d1({ zone: "duur", min: 20, kind: "Rustig hardlopen", title: "10 min soepel", goal: "Losjes, je spaart voor je mijlpaal", blocks: [
-      "5 min stevig inwandelen",
-      "10 min aaneengesloten hardlopen, praattempo",
-      "5 min uitwandelen",
+  { week: 6, dates: "26 okt–1 nov", phase: "Fase 2 · Wandelen met je honden, rug voorop", sessions: [
+    d1({ zone: "rug", min: 25, title: "Rugoefeningen + wandeling", goal: "Je romp sterker maken", blocks: [
+      "15 min rustig wandelen met de honden",
+      "Kat-koe: 10× rustig",
+      "Bruggetje: 2× 10",
+      "Dead bug, heel rustig: op je rug, armen omhoog, om en om een been uitstrekken, 2× 6 per kant",
+      "Voel je je rug? Kleiner bewegen of overslaan",
     ] }),
-    d2({ zone: "lang", min: 30, kind: "Mijlpaal", title: "🎉 20 minuten aan één stuk", goal: "Waar je acht weken voor gewerkt hebt", blocks: [
-      "5 min stevig inwandelen",
-      "20 min aaneengesloten hardlopen, praattempo",
-      "Start langzamer dan je wilt, dat is het hele geheim",
-      "5 min uitwandelen",
+    d2({ zone: "stevig", min: 40, title: "40 min met 3× 6 min stevig", goal: "Stevig wandelen wordt langer", blocks: [
+      "10 min rustig wandelen met de honden",
+      "3× 6 min stevig doorstappen, met 4 min rustig ertussen",
+      "Rustig uitwandelen tot 40 min",
+    ] }),
+  ]},
+  { week: 7, dates: "2–8 nov", phase: "Fase 2 · Wandelen met je honden, rug voorop", sessions: [
+    d1({ zone: "rug", min: 30, title: "Rugoefeningen + wandeling", goal: "Sterk en soepel", blocks: [
+      "15 min rustig wandelen met de honden",
+      "Kat-koe: 10×",
+      "Bruggetje: 2× 12",
+      "Dead bug: 2× 8 per kant",
+      "Zijplank op je knieën: 2× 15 sec per kant, alleen als het pijnvrij gaat",
+    ] }),
+    d2({ zone: "stevig", min: 50, title: "50 min met 20 min stevig", goal: "Twintig minuten aan één stuk stevig", blocks: [
+      "10 min rustig wandelen met de honden",
+      "20 min stevig doorstappen aan één stuk",
+      "20 min rustig uitwandelen",
+    ] }),
+  ]},
+  { week: 8, dates: "9–15 nov", phase: "Fase 2 · Wandelen met je honden, rug voorop", finish: true, raceLabel: "🎉 Jouw mijlpaal", raceSub: "60 minuten stevig wandelen met je honden", sessions: [
+    d1({ zone: "rug", min: 25, title: "Rugoefeningen, rustig", goal: "Fris naar je mijlpaal", blocks: [
+      "15 min rustig wandelen met de honden",
+      "Kat-koe, bruggetje en dead bug, elk 2× rustig",
+      "Deze week niets nieuws, gewoon lekker bewegen",
+    ] }),
+    d2({ zone: "stevig", min: 60, title: "🎉 60 minuten met je honden", goal: "Jouw mijlpaal: een uur stevig wandelen", why: "Een uur stevig wandelen met je honden, met je rug als baas over het tempo. Dat is fitter worden zoals het bij jou past. Trots op jezelf zijn mag, want dit heb je stap voor stap opgebouwd terwijl je rug je dwarszat.", blocks: [
+      "10 min rustig wandelen om warm te worden",
+      "40 min stevig doorstappen, mag in stukken als dat fijner is voor je rug",
+      "10 min rustig uitwandelen",
+      "Klaar? Chapeau, strijder! 🎉",
     ] }),
   ]},
 ];
 
 const INFO = [
   { icon: "🎯", title: "Je doel, eerlijk bekeken", items: [
-    "Je wilt 10 kilo kwijt en het liefst binnen twee maanden. Eerlijk: dat is ruim een kilo per week, en dat is niet realistisch en ook niet gezond.",
-    "In deze acht weken is 4 tot 6 kilo haalbaar. Die 10 kilo duurt eerder 3 tot 4 maanden, en dan blijft het er ook af.",
-    "Hardlopen helpt, maar het meeste gebeurt in de keuken. Hardlopen maakt je vooral fitter, sterker en rustiger in je hoofd.",
-    "Wil je het eetgedeelte er serieus bij? Vraag Coach Bart naar de voedingscoach, dat vult dit schema precies aan.",
-    "Kijk daarom niet alleen naar de weegschaal. Dat je straks 20 minuten aan één stuk loopt, is minstens zo veel waard.",
+    "Je rug gaat nu voor. Daarom staat hardlopen even op pauze en word je fitter met wandelen.",
+    "Wandelen helpt ook bij afvallen. Stevig doorstappen kost meer energie dan je denkt, en je kunt het elke dag doen.",
+    "De 10 kilo blijft een doel voor de lange termijn. Het meeste gebeurt in de keuken, en daar kan de voedingscoach je bij helpen.",
+    "Je mijlpaal is nu 60 minuten stevig wandelen met je honden. Dat is minstens zo veel waard als een getal op de weegschaal.",
+    "Is je rug weer rustig? Dan kijken we samen of hardlopen er later weer in kan.",
   ]},
   { icon: "🦴", title: "Je rug: hier letten we op", items: [
-    "Omdat je rug vaker opspeelt, bouwen we extra rustig op. Daarom begin je met loopjes van één minuut.",
-    "Loop nooit twee dagen achter elkaar. Tussen je trainingen zit minstens één dag.",
-    "Zoek zachte ondergrond: gras, een bospad of een parkpad is veel vriendelijker dan stoeptegels.",
-    "Wat stijf na afloop is normaal. Scherpe pijn, of pijn die uitstraalt naar je been, is een stopteken.",
-    "Twee keer op rij last? Sla de week over of wandel alleen, en laat het Coach Bart weten.",
-    "Ben je hier nog niet mee bij een huisarts of fysio geweest? Doe dat even, dan begin je met een gerust hoofd.",
+    "Rustig bewegen is bij rugpijn meestal beter dan stilzitten. Daarom blijf je wandelen, in je eigen tempo.",
+    "Alles moet pijnvrij gaan. Doet een oefening of een stuk stevig wandelen pijn, dan doe je het rustiger of sla je het over.",
+    "Heb je echt last? Ga even langs je huisarts of een fysiotherapeut. Die kan kijken wat er met je rug aan de hand is en wat je wel en niet moet doen.",
+    "Ga zeker snel naar de huisarts als de pijn uitstraalt naar je been, als je tintelingen of een doof gevoel hebt, of als de pijn 's nachts niet minder wordt.",
+    "Zegt een fysio iets anders dan dit schema? Dan gaat de fysio voor. Laat het Coach Bart weten, dan passen we het aan.",
   ]},
   { icon: "🐕", title: "Je hondenwandelingen zijn goud", items: [
-    "Je loopt elke dag met je honden. Dat is een betere basis dan je zelf denkt.",
-    "Blijf die wandelingen gewoon doen, ook op je loopdagen. Ze tellen als beweging en zijn goed voor je rug.",
-    "Op de dagen tussen je trainingen is een stevige wandeling precies goed.",
-    "Wil je iets extra's? Wandel af en toe een stuk stevig door, zodat je ademhaling omhoog gaat.",
+    "Je honden zijn nu je trainingsmaatjes. Je loopt toch al elke dag met ze, en daar bouwen we op.",
+    "Je dagelijkse rondjes blijven gewoon. De twee momenten in de app zijn de wandelingen waar je bewust iets meer van maakt.",
+    "Stevig doorstappen met de honden: rechtop, schouders los, armen rustig mee.",
+    "Trekt een hond hard aan de lijn? Neem die liever op een rustig moment mee, rukken aan je arm is niet fijn voor je rug.",
   ]},
-  { icon: "🏋️", title: "Basic Fit weer oppakken", items: [
-    "Twee keer per week kracht is ideaal naast dit schema, en juist goed voor je rug.",
-    "Focus op je romp en billen: bruggetje, plank, dead bug, en rustige squats of beenpers.",
-    "Begin licht. Liever te weinig gewicht de eerste weken dan een week uitvallen.",
-    "Doe zware benen niet op de dag vóór een loopdag.",
-    "Twijfel je over een oefening met je rug? Vraag het even aan een instructeur daar.",
+  { icon: "🏋️", title: "Basic Fit, later weer", items: [
+    "Laat de sportschool even rusten zolang je rug echt last geeft.",
+    "Is je rug rustiger? Begin dan heel licht, en het liefst met hulp van een fysio of instructeur.",
+    "De rugoefeningen in je app zijn alvast een goede basis voor later.",
   ]},
-  { icon: "🗓️", title: "Flexibel lopen, zo werkt het", items: [
-    "Geen vaste dagen. Elke week staan er twee trainingen klaar en jij kiest wanneer.",
-    "Houd er minstens één dag tussen, dat is de belangrijkste regel voor je rug.",
+  { icon: "🗓️", title: "Flexibel bewegen, zo werkt het", items: [
+    "Geen vaste dagen. Elke week staan er twee momenten klaar en jij kiest wanneer.",
+    "Daarnaast wandel je gewoon elke dag met je honden. Dat telt allemaal mee.",
     "Komt een hele week niet uit? Gebruik de knop bij het schema om alles een week op te schuiven.",
-    "Een training missen is niet erg. Twee weken niets doen wel. Ga dan gewoon weer verder waar je was.",
+    "Een moment missen is niet erg. Ga gewoon weer verder waar je was.",
   ]},
   { icon: "🔢", title: "Zo lees je je trainingen", items: [
-    "6× 1 min betekent: zes keer één minuut hardlopen, met wandelpauzes ertussen.",
-    "Zes loopjes hebben dus vijf wandelpauzes. Na het laatste loopje ga je meteen uitwandelen.",
-    "De tijd bovenaan is je hele training: inwandelen, de loopjes, de pauzes en het uitwandelen samen.",
-    "Praattempo betekent: je kunt tijdens het lopen nog een hele zin uitspreken. Kan dat niet, dan loop je te hard.",
+    "De tijd bovenaan is je hele wandeling of oefenmoment, van begin tot eind.",
+    "Stevig wandelen betekent: je ademhaling gaat omhoog, praten kan nog, zingen niet meer.",
+    "2× 5 min stevig betekent: twee keer vijf minuten stevig doorstappen, met rustig wandelen ertussen.",
+    "Bij de rugoefeningen staat hoe vaak je iets doet. Pijnvrij gaat altijd voor het aantal.",
   ]},
   { icon: "🥤", title: "Eten en drinken, zonder streng dieet", items: [
     "Geen crashdieet. Kleine dingen die je volhoudt, doen op de lange termijn veel meer.",
@@ -266,19 +285,102 @@ const BADGES = [
   { id: "streak",  icon: "🔥", name: "Twee weken vol", desc: "Reeks van 4 trainingen",   test: (s) => s.streak >= 4 },
   { id: "half",    icon: "⚡", name: "Halverwege",     desc: "50% van je schema",        test: (s) => s.done >= s.total / 2 },
   { id: "tien",    icon: "🔟", name: "Tien gedaan",    desc: "10 trainingen gedaan",     test: (s) => s.done >= 10 },
-  { id: "kwartier",icon: "⏱️", name: "Een kwartier",   desc: "15 min gelopen en gelogd", test: (s) => s.maxTime >= 15 * 60 },
+  { id: "halfuur", icon: "⏱️", name: "Half uur",       desc: "30 min bewogen en gelogd", test: (s) => s.maxTime >= 30 * 60 },
   { id: "trouw",   icon: "📅", name: "Volgehouden",    desc: "14 trainingen gedaan",     test: (s) => s.done >= 14 },
-  { id: "finish",  icon: "🎉", name: "20 minuten",     desc: "Je mijlpaal gehaald",      test: (s) => s.raceDone },
+  { id: "finish",  icon: "🎉", name: "Een uur",        desc: "60 min met je honden",     test: (s) => s.raceDone },
 ];
 
 /* ================================================================== *
  *  State
  * ================================================================== */
-function loadLog() {
-  try { return JSON.parse(localStorage.getItem(STORE_KEY)) || {}; }
-  catch { return {}; }
+const LEGACY_KEYS = CONFIG.legacyKeys || [];
+
+function leesSleutel(k) {
+  try { const v = JSON.parse(localStorage.getItem(k)); return v && typeof v === "object" ? v : null; }
+  catch { return null; }
 }
-function saveLog() { localStorage.setItem(STORE_KEY, JSON.stringify(log)); }
+function aantalSessies(o) { return o ? Object.keys(o).filter((k) => /^w\d+-/.test(k)).length : 0; }
+function samenvoegen(hoofd, extra) { return { ...extra, ...hoofd }; }
+
+/* Voortgang laden. Staat er iets onder een oudere opslagsleutel, dan nemen we
+   dat over, zodat niemand zijn afgevinkte trainingen kwijtraakt. */
+function loadLog() {
+  let uit = leesSleutel(STORE_KEY) || {};
+  const eigen = aantalSessies(uit);
+  LEGACY_KEYS.forEach((k) => {
+    const oud = leesSleutel(k);
+    if (aantalSessies(oud)) uit = samenvoegen(uit, oud);
+  });
+  if (aantalSessies(uit) > eigen) {
+    try { localStorage.setItem(STORE_KEY, JSON.stringify(uit)); } catch {}
+  }
+  return uit;
+}
+function saveLog() {
+  log.__saved = Date.now();
+  try { localStorage.setItem(STORE_KEY, JSON.stringify(log)); } catch {}
+  idbZet(log);
+  renderLaatstOpgeslagen();
+}
+
+/* ----- Tweede back-up in IndexedDB ---------------------------------- *
+ *  localStorage kan door de browser worden opgeruimd. Elke opslag gaat
+ *  daarom ook naar IndexedDB; bij opstarten halen we terug wat vollediger is.
+ * -------------------------------------------------------------------- */
+const IDB_NAAM = "bartlopen-runcoach", IDB_STORE = "logs";
+function idbOpen() {
+  return new Promise((ok, nee) => {
+    if (!window.indexedDB) return nee(new Error("geen indexedDB"));
+    const r = indexedDB.open(IDB_NAAM, 1);
+    r.onupgradeneeded = () => {
+      if (!r.result.objectStoreNames.contains(IDB_STORE)) r.result.createObjectStore(IDB_STORE);
+    };
+    r.onsuccess = () => ok(r.result);
+    r.onerror = () => nee(r.error);
+  });
+}
+async function idbZet(data) {
+  try {
+    const db = await idbOpen();
+    await new Promise((ok, nee) => {
+      const t = db.transaction(IDB_STORE, "readwrite");
+      t.objectStore(IDB_STORE).put(JSON.parse(JSON.stringify(data)), STORE_KEY);
+      t.oncomplete = ok; t.onerror = () => nee(t.error);
+    });
+  } catch {}
+}
+async function idbHaal() {
+  try {
+    const db = await idbOpen();
+    return await new Promise((ok, nee) => {
+      const t = db.transaction(IDB_STORE, "readonly");
+      const q = t.objectStore(IDB_STORE).get(STORE_KEY);
+      q.onsuccess = () => ok(q.result || null);
+      q.onerror = () => nee(q.error);
+    });
+  } catch { return null; }
+}
+function herstelUitBackup() {
+  return idbHaal().then((kopie) => {
+    if (!kopie) { idbZet(log); return false; }
+    if (aantalSessies(kopie) > aantalSessies(log)) {
+      log = samenvoegen(log, kopie);
+      saveLog(); renderAll();
+      toast("Je voortgang is teruggehaald 🔄");
+      return true;
+    }
+    idbZet(log);
+    return false;
+  }).catch(() => false);
+}
+function renderLaatstOpgeslagen() {
+  const el = document.getElementById("lastSaved");
+  if (!el) return;
+  const t = log.__saved;
+  if (!t) { el.textContent = ""; return; }
+  const d = new Date(t), pad = (n) => String(n).padStart(2, "0");
+  el.textContent = `Laatst opgeslagen: ${d.getDate()}-${pad(d.getMonth() + 1)} om ${pad(d.getHours())}:${pad(d.getMinutes())} · ${aantalSessies(log)} trainingen ingevuld`;
+}
 let log = loadLog();
 
 const sid = (week, day) => `w${week}-${day}`;
@@ -1003,7 +1105,7 @@ function openDetail(week, day) {
     log[id] = cur; saveLog();
     if (cur.done) {
       celebrate();
-      toast(!isRaceDetail ? DONE[Math.floor(Math.random() * DONE.length)] : w.finish ? "🎉 20 minuten aan één stuk! Wat een strijder!" : w.race ? "🏅 Finisher! Wat een prestatie, strijder!" : w.tuneup ? "🏁 Wedstrijd voltooid, sterk gepacet!" : DONE[Math.floor(Math.random() * DONE.length)]);
+      toast(!isRaceDetail ? DONE[Math.floor(Math.random() * DONE.length)] : w.finish ? "🎉 Een uur met je honden! Wat een strijder!" : w.race ? "🏅 Finisher! Wat een prestatie, strijder!" : w.tuneup ? "🏁 Wedstrijd voltooid, sterk gepacet!" : DONE[Math.floor(Math.random() * DONE.length)]);
     }
     closeDetail();
   });
@@ -1261,6 +1363,8 @@ $("pdfBtn").addEventListener("click", () => {
 
 /* Alles tekenen */
 renderAll();
+renderLaatstOpgeslagen();
+herstelUitBackup();
 /* Na de intro-animatie geen her-fade meer; failsafe die alles zeker toont */
 setTimeout(() => { initialRevealDone = true; }, 900);
 setTimeout(() => document.querySelectorAll(".reveal:not(.in)").forEach((el) => el.classList.add("in")), 1600);
